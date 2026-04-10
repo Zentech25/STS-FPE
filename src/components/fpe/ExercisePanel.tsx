@@ -3,7 +3,7 @@ import type { LaneState, PracticeType } from '@/types/fpe';
 
 const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div>
-    <label className="block text-xs font-mono text-muted-foreground mb-1">{label}</label>
+    <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">{label}</label>
     {children}
   </div>
 );
@@ -16,7 +16,7 @@ const SelectField = ({ label, value, options, onChange, disabled }: {
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="w-full bg-secondary text-secondary-foreground rounded px-2 py-1.5 text-sm border border-border disabled:opacity-50 font-mono"
+      className="sys-input h-9 text-[12px] disabled:opacity-40"
     >
       {options.map((o) => <option key={o} value={o}>{o}</option>)}
     </select>
@@ -35,7 +35,7 @@ const NumberField = ({ label, value, onChange, disabled, min = 0, max, step = 1 
       min={min}
       max={max}
       step={step}
-      className="w-full bg-secondary text-secondary-foreground rounded px-2 py-1.5 text-sm border border-border disabled:opacity-50 font-mono"
+      className="sys-input h-9 text-[12px] font-mono disabled:opacity-40"
     />
   </Field>
 );
@@ -47,15 +47,20 @@ export const ExercisePanel = ({ lane }: { lane: LaneState }) => {
   const update = (config: Partial<typeof ex>) => updateExercise(lane.id, config);
 
   return (
-    <div className="glass-card p-4 space-y-4">
-      <h3 className="font-mono text-xs font-semibold tracking-wider text-muted-foreground">EXERCISE CONFIG</h3>
+    <div className="glass-panel p-5 space-y-4">
+      <div className="panel-header">EXERCISE CONFIG</div>
       {disabled && (
-        <div className="bg-info/10 border border-info/20 rounded px-3 py-2 text-xs text-info font-mono">
-          MASTER MODE — CONFIG READ ONLY
+        <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-[12px] animate-fade-in" style={{
+          background: 'hsl(var(--accent) / 0.08)',
+          border: '1px solid hsl(var(--accent) / 0.15)',
+          color: 'hsl(var(--accent))',
+        }}>
+          <span className="font-semibold">MASTER MODE</span>
+          <span className="text-muted-foreground">— Configuration is read-only</span>
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         <SelectField label="TYPE" value={ex.type} options={['custom', 'arc']} onChange={(v) => update({ type: v as 'custom' | 'arc' })} disabled={disabled} />
         <SelectField
           label="PRACTICE"
@@ -78,7 +83,7 @@ export const ExercisePanel = ({ lane }: { lane: LaneState }) => {
       )}
 
       {ex.practiceType === 'snapshot' && (
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-4">
           <NumberField label="EXPOSURE (sec)" value={ex.exposure} onChange={(v) => update({ exposure: v })} disabled={disabled} min={1} />
           <NumberField label="UP TIME (sec)" value={ex.upTime} onChange={(v) => update({ upTime: v })} disabled={disabled} min={1} />
           <NumberField label="DOWN TIME (sec)" value={ex.downTime} onChange={(v) => update({ downTime: v })} disabled={disabled} min={1} />
