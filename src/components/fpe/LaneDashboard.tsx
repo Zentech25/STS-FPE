@@ -7,7 +7,7 @@ import { AnimatedBackground } from './AnimatedBackground';
 import { ArrowLeft, Play, Pause, Square, Crosshair } from 'lucide-react';
 
 export const LaneDashboard = () => {
-  const { lanes, selectedLaneId, clearLane, setStatus, setMode } = useFPEStore();
+  const { lanes, selectedLaneId, setStatus, setMode } = useFPEStore();
   const lane = lanes.find((l) => l.id === selectedLaneId);
   if (!lane) return null;
 
@@ -33,16 +33,13 @@ export const LaneDashboard = () => {
           borderBottom: "1px solid var(--divider)",
           boxShadow: "var(--shadow-soft)",
         }}>
-          <div className="flex items-center gap-4">
-            <button onClick={clearLane} className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground glass-btn">
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-            <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{
                 background: "var(--gradient-primary)",
                 boxShadow: "0 4px 14px hsl(230 80% 60% / 0.3)",
               }}>
                 <Crosshair className="w-4 h-4 text-white" />
+              </div>
               </div>
               <div>
                 <span className="text-[14px] font-bold tracking-wide text-foreground leading-none">Lane {lane.id}</span>
