@@ -24,20 +24,20 @@ export const TraineePanel = ({ lane }: { lane: LaneState }) => {
   };
 
   return (
-    <div className="glass-card p-4 space-y-4">
+    <div className="glass-panel p-5 space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-mono text-xs font-semibold tracking-wider text-muted-foreground">TRAINEES</h3>
-        <button onClick={() => setShowAdd(!showAdd)} className="text-primary hover:text-primary/80 transition-colors">
+        <div className="panel-header mb-0 pb-0 border-b-0" style={{ borderBottom: 'none' }}>TRAINEES</div>
+        <button onClick={() => setShowAdd(!showAdd)} className="w-8 h-8 rounded-xl flex items-center justify-center glass-btn text-primary">
           <UserPlus className="w-4 h-4" />
         </button>
       </div>
 
       {showAdd && (
-        <div className="flex gap-2">
+        <div className="flex gap-2 animate-fade-in">
           <select
             value={newRank}
             onChange={(e) => setNewRank(e.target.value)}
-            className="bg-secondary text-secondary-foreground rounded px-2 py-1 text-xs font-mono border border-border"
+            className="sys-input h-9 w-20 text-[11px] font-mono"
           >
             {['PV2', 'PFC', 'SPC', 'CPL', 'SGT', 'SSG'].map((r) => (
               <option key={r} value={r}>{r}</option>
@@ -47,52 +47,61 @@ export const TraineePanel = ({ lane }: { lane: LaneState }) => {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="Last, F."
-            className="flex-1 bg-secondary text-secondary-foreground rounded px-2 py-1 text-xs border border-border placeholder:text-muted-foreground"
+            className="sys-input h-9 flex-1 text-[12px]"
             onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
           />
-          <button onClick={handleAdd} className="bg-primary text-primary-foreground px-2 py-1 rounded text-xs font-semibold">ADD</button>
+          <button onClick={handleAdd} className="sys-btn-primary h-9 w-16 text-[11px]">ADD</button>
         </div>
       )}
 
       {activeTrainee ? (
-        <div className="glass-card-active p-3">
-          <div className="flex items-center gap-2 mb-1">
-            <User className="w-4 h-4 text-primary" />
-            <span className="text-xs font-mono text-primary font-semibold">ACTIVE FIRER</span>
+        <div className="glass-panel-glow p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{
+              background: "var(--gradient-primary)",
+              boxShadow: "0 2px 8px hsl(230 80% 60% / 0.3)",
+            }}>
+              <User className="w-3.5 h-3.5 text-white" />
+            </div>
+            <span className="text-[10px] font-semibold tracking-wider uppercase text-primary">ACTIVE FIRER</span>
           </div>
-          <div className="text-foreground font-semibold">{activeTrainee.rank} {activeTrainee.name}</div>
-          <div className="text-xs text-muted-foreground font-mono">ID: {activeTrainee.id}</div>
+          <div className="text-foreground font-semibold text-[14px]">{activeTrainee.rank} {activeTrainee.name}</div>
+          <div className="text-[11px] text-muted-foreground font-mono mt-1">ID: {activeTrainee.id}</div>
         </div>
       ) : (
-        <div className="text-center text-muted-foreground text-sm py-4">No trainee assigned</div>
+        <div className="text-center text-muted-foreground text-[13px] py-6">No trainee assigned</div>
       )}
 
       {waiting.length > 0 && (
-        <div className="space-y-1">
-          <span className="text-xs font-mono text-muted-foreground">QUEUE</span>
+        <div className="space-y-1.5">
+          <span className="text-[10px] font-semibold tracking-wider uppercase text-muted-foreground">QUEUE</span>
           {waiting.map((t, i) => {
             const queueIndex = i + 1;
             return (
-              <div key={t.id} className="flex items-center justify-between bg-secondary/50 rounded px-3 py-2 text-sm">
-                <span className="text-foreground">{t.rank} {t.name}</span>
+              <div key={t.id} className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-[13px] interactive-row" style={{
+                background: "var(--surface-elevated)",
+                border: "1px solid var(--divider)",
+                borderRadius: "12px",
+              }}>
+                <span className="text-foreground font-medium">{t.rank} {t.name}</span>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => reorderQueue(lane.id, queueIndex, queueIndex - 1)}
-                    className="text-muted-foreground hover:text-foreground p-0.5"
+                    className="text-muted-foreground hover:text-foreground p-1 rounded-lg transition-colors"
                   >
                     <ChevronUp className="w-3.5 h-3.5" />
                   </button>
                   {queueIndex < lane.traineeQueue.length - 1 && (
                     <button
                       onClick={() => reorderQueue(lane.id, queueIndex, queueIndex + 1)}
-                      className="text-muted-foreground hover:text-foreground p-0.5"
+                      className="text-muted-foreground hover:text-foreground p-1 rounded-lg transition-colors"
                     >
                       <ChevronDown className="w-3.5 h-3.5" />
                     </button>
                   )}
                   <button
                     onClick={() => removeTrainee(lane.id, t.id)}
-                    className="text-muted-foreground hover:text-danger p-0.5 ml-1"
+                    className="text-muted-foreground hover:text-destructive p-1 rounded-lg transition-colors ml-1"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>

@@ -1,18 +1,17 @@
 import type { SessionStatus } from '@/types/fpe';
 
-const statusConfig: Record<SessionStatus, { label: string; className: string }> = {
-  standby: { label: 'STANDBY', className: 'bg-muted text-muted-foreground' },
-  live: { label: 'LIVE', className: 'bg-success/20 text-success status-glow-success' },
-  paused: { label: 'PAUSED', className: 'bg-warning/20 text-warning status-glow-warning' },
+const statusConfig: Record<SessionStatus, { label: string; dotClass: string; bgClass: string }> = {
+  standby: { label: 'STANDBY', dotClass: 'status-dot-offline', bgClass: 'bg-muted' },
+  live: { label: 'LIVE', dotClass: 'status-dot-online', bgClass: 'bg-success/10' },
+  paused: { label: 'PAUSED', dotClass: 'status-dot-warning', bgClass: 'bg-warning/10' },
 };
 
 export const StatusBadge = ({ status }: { status: SessionStatus }) => {
   const config = statusConfig[status];
   return (
-    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded font-mono text-xs font-semibold tracking-wider ${config.className}`}>
-      {status === 'live' && <span className="w-2 h-2 rounded-full bg-success animate-pulse-glow" />}
-      {status === 'paused' && <span className="w-2 h-2 rounded-full bg-warning" />}
-      {config.label}
+    <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-semibold tracking-wider uppercase ${config.bgClass}`}>
+      <span className={`status-dot ${config.dotClass}`} />
+      <span className="text-foreground">{config.label}</span>
     </span>
   );
 };
