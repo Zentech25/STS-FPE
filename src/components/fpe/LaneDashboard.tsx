@@ -91,12 +91,6 @@ export const LaneDashboard = () => {
             </button>
 
             <ModeBadge mode={lane.mode} />
-            <button
-              onClick={toggleMode}
-              className="text-[12px] font-semibold text-muted-foreground h-11 px-5 rounded-xl glass-btn"
-            >
-              SWITCH
-            </button>
             <div className="flex gap-2 ml-2">
               <button
                 onClick={toggleStatus}
