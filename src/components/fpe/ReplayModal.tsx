@@ -233,7 +233,7 @@ const SelectionScreen = ({
                   className="sys-input h-12 w-full pl-10 text-[13px]"
                 />
               </div>
-              {showSessionDropdown && filteredSessions.length > 0 && sessionSearch && (
+              {showSessionDropdown && filteredSessions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 mt-1 rounded-xl overflow-hidden z-20 max-h-48 overflow-auto" style={{
                   background: "var(--surface-elevated)",
                   border: "1px solid var(--divider)",
