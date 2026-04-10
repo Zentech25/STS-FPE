@@ -10,7 +10,7 @@ import { Play, Pause, Square, Crosshair, RotateCcw, History } from 'lucide-react
 import { useState } from 'react';
 
 export const LaneDashboard = () => {
-  const { lanes, selectedLaneId, setStatus, setMode, updateExercise, resetSession, saveSession } = useFPEStore();
+  const { lanes, selectedLaneId, setStatus, updateExercise, resetSession, saveSession } = useFPEStore();
   const lane = lanes.find((l) => l.id === selectedLaneId);
   const [replayOpen, setReplayOpen] = useState(false);
   if (!lane) return null;
@@ -29,7 +29,7 @@ export const LaneDashboard = () => {
     resetSession(lane.id);
   };
 
-  const toggleMode = () => setMode(lane.id, lane.mode === 'master' ? 'firer' : 'master');
+  
   const setExType = (type: 'custom' | 'arc') => updateExercise(lane.id, { type });
 
   return (
@@ -91,12 +91,6 @@ export const LaneDashboard = () => {
             </button>
 
             <ModeBadge mode={lane.mode} />
-            <button
-              onClick={toggleMode}
-              className="text-[12px] font-semibold text-muted-foreground h-11 px-5 rounded-xl glass-btn"
-            >
-              SWITCH
-            </button>
             <div className="flex gap-2 ml-2">
               <button
                 onClick={toggleStatus}
