@@ -27,6 +27,44 @@ export interface ExerciseConfig {
   downTime: number;
 }
 
+export interface ShotRecord {
+  id: string;
+  x: number; // % position on target
+  y: number;
+  zone: number;
+  score: number;
+  isHit: boolean;
+  timestamp: number;
+}
+
+export interface SessionRecord {
+  id: string;
+  traineeId: string;
+  traineeName: string;
+  traineeRank: string;
+  laneId: number;
+  practiceType: PracticeType;
+  weapon: string;
+  firingPosition: string;
+  targetType: string;
+  range: number;
+  timeOfDay: TimeOfDay;
+  visibility: number;
+  roundsAllotted: number;
+  shotsFired: number;
+  hits: number;
+  score: number;
+  maxScore: number;
+  shots: ShotRecord[];
+  date: string;
+}
+
+export interface ARCSelection {
+  weapon: string;
+  fireType: string;
+  practice: string;
+}
+
 export interface LaneState {
   id: number;
   status: SessionStatus;
@@ -36,4 +74,7 @@ export interface LaneState {
   shotsFired: number;
   score: number;
   hits: number;
+  shots: ShotRecord[];
+  sessionHistory: SessionRecord[];
+  arcSelection: ARCSelection;
 }
