@@ -4,17 +4,15 @@ import { ModeBadge } from './ModeBadge';
 import { TraineePanel } from './TraineePanel';
 import { ExercisePanel } from './ExercisePanel';
 import { ARCPanel } from './ARCPanel';
-import { ReplayPanel } from './ReplayPanel';
+import { ReplayModal } from './ReplayModal';
 import { AnimatedBackground } from './AnimatedBackground';
-import { Play, Pause, Square, Crosshair, RotateCcw, Save } from 'lucide-react';
+import { Play, Pause, Square, Crosshair, RotateCcw, History } from 'lucide-react';
 import { useState } from 'react';
-
-type DashTab = 'config' | 'replay';
 
 export const LaneDashboard = () => {
   const { lanes, selectedLaneId, setStatus, setMode, updateExercise, resetSession, saveSession } = useFPEStore();
   const lane = lanes.find((l) => l.id === selectedLaneId);
-  const [tab, setTab] = useState<DashTab>('config');
+  const [replayOpen, setReplayOpen] = useState(false);
   if (!lane) return null;
 
   const toggleStatus = () => {
@@ -40,7 +38,7 @@ export const LaneDashboard = () => {
 
       <div className="relative z-10">
         {/* Header */}
-        <header className="h-14 flex items-center justify-between px-6 shrink-0" style={{
+        <header className="h-16 flex items-center justify-between px-6 shrink-0" style={{
           background: "var(--surface-glass)",
           backdropFilter: "blur(24px) saturate(180%)",
           WebkitBackdropFilter: "blur(24px) saturate(180%)",
@@ -49,30 +47,29 @@ export const LaneDashboard = () => {
         }}>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{
                 background: "var(--gradient-primary)",
                 boxShadow: "0 4px 14px hsl(230 80% 60% / 0.3)",
               }}>
-                <Crosshair className="w-4 h-4 text-white" />
+                <Crosshair className="w-5 h-5 text-white" />
               </div>
               <div>
-                <span className="text-[14px] font-bold tracking-wide text-foreground leading-none">Lane {lane.id}</span>
-                <span className="block text-[9px] text-muted-foreground font-mono mt-0.5">FPE CONTROL</span>
+                <span className="text-[15px] font-bold tracking-wide text-foreground leading-none">Lane {lane.id}</span>
+                <span className="block text-[10px] text-muted-foreground font-mono mt-0.5">FPE CONTROL</span>
               </div>
             </div>
             <StatusBadge status={lane.status} />
           </div>
 
-          {/* Center: Exercise Type Toggle + Tab Toggle */}
+          {/* Center: Exercise Type Toggle */}
           <div className="flex items-center gap-3">
-            {/* Custom / ARC toggle */}
             <div className="flex items-center rounded-xl overflow-hidden" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
               {(['custom', 'arc'] as const).map((t) => (
                 <button
                   key={t}
                   onClick={() => setExType(t)}
                   disabled={lane.mode === 'master'}
-                  className={`px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-all ${
+                  className={`px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider transition-all ${
                     lane.exercise.type === t ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                   } disabled:cursor-default`}
                   style={lane.exercise.type === t ? { background: "var(--gradient-primary)" } : undefined}
@@ -81,48 +78,41 @@ export const LaneDashboard = () => {
                 </button>
               ))}
             </div>
-
-            {/* Config / Replay tabs */}
-            <div className="flex items-center rounded-xl overflow-hidden" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
-              {([{ id: 'config' as DashTab, label: 'Config' }, { id: 'replay' as DashTab, label: 'Replay' }]).map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setTab(t.id)}
-                  className={`px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-all ${
-                    tab === t.id ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                  style={tab === t.id ? { background: "var(--gradient-primary)" } : undefined}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Replay button */}
+            <button
+              onClick={() => setReplayOpen(true)}
+              className="h-11 px-5 rounded-xl flex items-center gap-2 glass-btn text-[12px] font-semibold text-muted-foreground hover:text-foreground"
+            >
+              <History className="w-4 h-4" />
+              REPLAY
+            </button>
+
             <ModeBadge mode={lane.mode} />
             <button
               onClick={toggleMode}
-              className="text-[11px] font-semibold text-muted-foreground px-3 py-2 rounded-xl glass-btn"
+              className="text-[12px] font-semibold text-muted-foreground h-11 px-5 rounded-xl glass-btn"
             >
               SWITCH
             </button>
-            <div className="flex gap-1.5 ml-2">
+            <div className="flex gap-2 ml-2">
               <button
                 onClick={toggleStatus}
-                className="w-9 h-9 rounded-xl flex items-center justify-center glass-btn"
+                className="w-11 h-11 rounded-xl flex items-center justify-center glass-btn"
                 style={{
                   color: lane.status === 'live' ? 'hsl(var(--warning))' : 'hsl(var(--success))',
                 }}
               >
-                {lane.status === 'live' ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                {lane.status === 'live' ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
               </button>
               <button
                 onClick={stop}
-                className="w-9 h-9 rounded-xl flex items-center justify-center glass-btn"
+                className="w-11 h-11 rounded-xl flex items-center justify-center glass-btn"
                 style={{ color: 'hsl(var(--destructive))' }}
               >
-                <Square className="w-4 h-4" />
+                <Square className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -145,19 +135,14 @@ export const LaneDashboard = () => {
               <ScoreStat label="ACCURACY" value={lane.shotsFired > 0 ? Math.round((lane.hits / lane.shotsFired) * 100) : 0} suffix="%" />
             </div>
 
-            {tab === 'config' && (
-              <>
-                <ExercisePanel lane={lane} />
-                <ARCPanel lane={lane} />
-              </>
-            )}
-
-            {tab === 'replay' && (
-              <ReplayPanel lane={lane} />
-            )}
+            <ExercisePanel lane={lane} />
+            <ARCPanel lane={lane} />
           </div>
         </main>
       </div>
+
+      {/* Replay Modal */}
+      <ReplayModal lane={lane} open={replayOpen} onClose={() => setReplayOpen(false)} />
     </div>
   );
 };
