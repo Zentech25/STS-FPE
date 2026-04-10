@@ -1,5 +1,6 @@
 import { useFPEStore } from '@/store/fpe-store';
 import type { LaneState, PracticeType } from '@/types/fpe';
+import { TARGETS } from '@/contexts/TargetsContext';
 
 const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div>
@@ -9,7 +10,7 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
 );
 
 const SelectField = ({ label, value, options, onChange, disabled }: {
-  label: string; value: string; options: string[]; onChange: (v: string) => void; disabled?: boolean;
+  label: string; value: string; options: { value: string; label: string }[] | string[]; onChange: (v: string) => void; disabled?: boolean;
 }) => (
   <Field label={label}>
     <select
@@ -18,7 +19,11 @@ const SelectField = ({ label, value, options, onChange, disabled }: {
       disabled={disabled}
       className="sys-input h-9 text-[12px] disabled:opacity-40"
     >
-      {options.map((o) => <option key={o} value={o}>{o}</option>)}
+      {options.map((o) => {
+        const val = typeof o === 'string' ? o : o.value;
+        const lbl = typeof o === 'string' ? o : o.label;
+        return <option key={val} value={val}>{lbl}</option>;
+      })}
     </select>
   </Field>
 );
@@ -40,11 +45,23 @@ const NumberField = ({ label, value, onChange, disabled, min = 0, max, step = 1 
   </Field>
 );
 
+const PRACTICE_TYPES: { id: PracticeType; label: string }[] = [
+  { id: 'grouping', label: 'Grouping' },
+  { id: 'application', label: 'Application' },
+  { id: 'timed', label: 'Timed' },
+  { id: 'snapshot', label: 'Snap Shot' },
+];
+
+const targetOptions = TARGETS.map((t) => ({ value: t.id, label: t.label }));
+
 export const ExercisePanel = ({ lane }: { lane: LaneState }) => {
   const { updateExercise } = useFPEStore();
   const ex = lane.exercise;
   const disabled = lane.mode === 'master';
   const update = (config: Partial<typeof ex>) => updateExercise(lane.id, config);
+
+  // Only show custom exercise fields (ARC fields are in ARC panel)
+  if (ex.type === 'arc') return null;
 
   return (
     <div className="glass-panel p-5 space-y-4">
@@ -60,22 +77,36 @@ export const ExercisePanel = ({ lane }: { lane: LaneState }) => {
         </div>
       )}
 
+      {/* Practice Type pills */}
+      <div>
+        <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">PRACTICE TYPE</label>
+        <div className="grid grid-cols-4 gap-0.5 p-0.5 rounded-xl" style={{ background: "var(--surface-inset)" }}>
+          {PRACTICE_TYPES.map((pt) => (
+            <button
+              key={pt.id}
+              onClick={() => !disabled && update({ practiceType: pt.id })}
+              disabled={disabled}
+              className={`text-[10px] text-center font-semibold py-2 rounded-lg transition-all ${
+                ex.practiceType === pt.id
+                  ? "text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              } disabled:cursor-default`}
+              style={ex.practiceType === pt.id ? { background: "var(--gradient-primary)" } : undefined}
+            >
+              {pt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
-        <SelectField label="TYPE" value={ex.type} options={['custom', 'arc']} onChange={(v) => update({ type: v as 'custom' | 'arc' })} disabled={disabled} />
-        <SelectField
-          label="PRACTICE"
-          value={ex.practiceType}
-          options={['grouping', 'application', 'timed', 'snapshot']}
-          onChange={(v) => update({ practiceType: v as PracticeType })}
-          disabled={disabled}
-        />
         <SelectField label="WEAPON" value={ex.weapon} options={['M4A1', 'M16A4', 'M249', 'M240B', 'M9']} onChange={(v) => update({ weapon: v })} disabled={disabled} />
         <SelectField label="POSITION" value={ex.firingPosition} options={['Prone Supported', 'Prone Unsupported', 'Kneeling', 'Standing']} onChange={(v) => update({ firingPosition: v })} disabled={disabled} />
         <NumberField label="RANGE (m)" value={ex.range} onChange={(v) => update({ range: v })} disabled={disabled} min={25} max={600} step={25} />
         <NumberField label="ROUNDS" value={ex.rounds} onChange={(v) => update({ rounds: v })} disabled={disabled} min={1} max={100} />
         <SelectField label="TIME OF DAY" value={ex.timeOfDay} options={['day', 'night']} onChange={(v) => update({ timeOfDay: v as 'day' | 'night' })} disabled={disabled} />
         <NumberField label="VISIBILITY %" value={ex.visibility} onChange={(v) => update({ visibility: v })} disabled={disabled} min={0} max={100} />
-        <SelectField label="TARGET" value={ex.targetType} options={['E-Type Silhouette', 'F-Type Silhouette', 'Dog Target', 'Bull\'s Eye']} onChange={(v) => update({ targetType: v })} disabled={disabled} />
+        <SelectField label="TARGET" value={ex.targetType} options={targetOptions} onChange={(v) => update({ targetType: v })} disabled={disabled} />
       </div>
 
       {ex.practiceType === 'timed' && (
