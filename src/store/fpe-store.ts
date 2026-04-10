@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { LaneState, Trainee, ExerciseConfig, SessionStatus, ControlMode } from '@/types/fpe';
+import type { LaneState, Trainee, ExerciseConfig, SessionStatus, ControlMode, ShotRecord, SessionRecord, ARCSelection } from '@/types/fpe';
 
 const defaultExercise = (laneId: number): ExerciseConfig => ({
   laneId,
@@ -12,7 +12,7 @@ const defaultExercise = (laneId: number): ExerciseConfig => ({
   rounds: 40,
   timeOfDay: 'day',
   visibility: 100,
-  targetType: 'E-Type Silhouette',
+  targetType: 'fig120cm',
   timeLimit: 0,
   exposure: 0,
   upTime: 0,
@@ -44,6 +44,9 @@ const createLane = (id: number): LaneState => ({
   shotsFired: 0,
   score: 0,
   hits: 0,
+  shots: [],
+  sessionHistory: [],
+  arcSelection: { weapon: '', fireType: '', practice: '' },
 });
 
 interface FPEStore {
@@ -57,7 +60,10 @@ interface FPEStore {
   addTrainee: (laneId: number, trainee: Trainee) => void;
   removeTrainee: (laneId: number, traineeId: string) => void;
   reorderQueue: (laneId: number, fromIndex: number, toIndex: number) => void;
-  fireShot: (laneId: number, hit: boolean) => void;
+  fireShot: (laneId: number, shot: ShotRecord) => void;
+  resetSession: (laneId: number) => void;
+  saveSession: (laneId: number) => void;
+  updateArcSelection: (laneId: number, sel: Partial<ARCSelection>) => void;
 }
 
 export const useFPEStore = create<FPEStore>((set) => ({
@@ -111,16 +117,68 @@ export const useFPEStore = create<FPEStore>((set) => ({
       }),
     })),
 
-  fireShot: (laneId, hit) =>
+  fireShot: (laneId, shot) =>
     set((s) => ({
       lanes: s.lanes.map((l) =>
         l.id === laneId
           ? {
               ...l,
               shotsFired: l.shotsFired + 1,
-              hits: hit ? l.hits + 1 : l.hits,
-              score: hit ? l.score + 5 : l.score,
+              hits: shot.isHit ? l.hits + 1 : l.hits,
+              score: l.score + shot.score,
+              shots: [...l.shots, shot],
             }
+          : l
+      ),
+    })),
+
+  resetSession: (laneId) =>
+    set((s) => ({
+      lanes: s.lanes.map((l) =>
+        l.id === laneId
+          ? { ...l, shotsFired: 0, hits: 0, score: 0, shots: [] }
+          : l
+      ),
+    })),
+
+  saveSession: (laneId) =>
+    set((s) => ({
+      lanes: s.lanes.map((l) => {
+        if (l.id !== laneId || l.traineeQueue.length === 0) return l;
+        const trainee = l.traineeQueue[0];
+        const record: SessionRecord = {
+          id: `SR-${Date.now()}`,
+          traineeId: trainee.id,
+          traineeName: trainee.name,
+          traineeRank: trainee.rank,
+          laneId: l.id,
+          practiceType: l.exercise.practiceType,
+          weapon: l.exercise.weapon,
+          firingPosition: l.exercise.firingPosition,
+          targetType: l.exercise.targetType,
+          range: l.exercise.range,
+          timeOfDay: l.exercise.timeOfDay,
+          visibility: l.exercise.visibility,
+          roundsAllotted: l.exercise.rounds,
+          shotsFired: l.shotsFired,
+          hits: l.hits,
+          score: l.score,
+          maxScore: l.exercise.rounds * 10,
+          shots: [...l.shots],
+          date: new Date().toISOString(),
+        };
+        return {
+          ...l,
+          sessionHistory: [...l.sessionHistory, record],
+        };
+      }),
+    })),
+
+  updateArcSelection: (laneId, sel) =>
+    set((s) => ({
+      lanes: s.lanes.map((l) =>
+        l.id === laneId
+          ? { ...l, arcSelection: { ...l.arcSelection, ...sel } }
           : l
       ),
     })),

@@ -3,12 +3,18 @@ import { StatusBadge } from './StatusBadge';
 import { ModeBadge } from './ModeBadge';
 import { TraineePanel } from './TraineePanel';
 import { ExercisePanel } from './ExercisePanel';
+import { ARCPanel } from './ARCPanel';
+import { ReplayPanel } from './ReplayPanel';
 import { AnimatedBackground } from './AnimatedBackground';
-import { ArrowLeft, Play, Pause, Square, Crosshair } from 'lucide-react';
+import { Play, Pause, Square, Crosshair, RotateCcw, Save } from 'lucide-react';
+import { useState } from 'react';
+
+type DashTab = 'config' | 'replay';
 
 export const LaneDashboard = () => {
-  const { lanes, selectedLaneId, setStatus, setMode } = useFPEStore();
+  const { lanes, selectedLaneId, setStatus, setMode, updateExercise, resetSession, saveSession } = useFPEStore();
   const lane = lanes.find((l) => l.id === selectedLaneId);
+  const [tab, setTab] = useState<DashTab>('config');
   if (!lane) return null;
 
   const toggleStatus = () => {
@@ -17,8 +23,16 @@ export const LaneDashboard = () => {
     else setStatus(lane.id, 'live');
   };
 
-  const stop = () => setStatus(lane.id, 'standby');
+  const stop = () => {
+    if (lane.shotsFired > 0 && lane.traineeQueue.length > 0) {
+      saveSession(lane.id);
+    }
+    setStatus(lane.id, 'standby');
+    resetSession(lane.id);
+  };
+
   const toggleMode = () => setMode(lane.id, lane.mode === 'master' ? 'firer' : 'master');
+  const setExType = (type: 'custom' | 'arc') => updateExercise(lane.id, { type });
 
   return (
     <div className="relative w-full h-screen overflow-auto">
@@ -47,6 +61,42 @@ export const LaneDashboard = () => {
               </div>
             </div>
             <StatusBadge status={lane.status} />
+          </div>
+
+          {/* Center: Exercise Type Toggle + Tab Toggle */}
+          <div className="flex items-center gap-3">
+            {/* Custom / ARC toggle */}
+            <div className="flex items-center rounded-xl overflow-hidden" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
+              {(['custom', 'arc'] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setExType(t)}
+                  disabled={lane.mode === 'master'}
+                  className={`px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-all ${
+                    lane.exercise.type === t ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                  } disabled:cursor-default`}
+                  style={lane.exercise.type === t ? { background: "var(--gradient-primary)" } : undefined}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+
+            {/* Config / Replay tabs */}
+            <div className="flex items-center rounded-xl overflow-hidden" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
+              {([{ id: 'config' as DashTab, label: 'Config' }, { id: 'replay' as DashTab, label: 'Replay' }]).map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setTab(t.id)}
+                  className={`px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-all ${
+                    tab === t.id ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                  style={tab === t.id ? { background: "var(--gradient-primary)" } : undefined}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -80,12 +130,12 @@ export const LaneDashboard = () => {
 
         {/* Content */}
         <main className="max-w-7xl mx-auto p-6 grid grid-cols-3 gap-5 stagger-children">
-          {/* Left column - Trainees */}
+          {/* Left column - Target/Trainees */}
           <div className="col-span-1 space-y-5">
             <TraineePanel lane={lane} />
           </div>
 
-          {/* Center & Right - Exercise + Score */}
+          {/* Center & Right */}
           <div className="col-span-2 space-y-5">
             {/* Score bar */}
             <div className="glass-panel p-5 grid grid-cols-4 gap-4">
@@ -95,7 +145,16 @@ export const LaneDashboard = () => {
               <ScoreStat label="ACCURACY" value={lane.shotsFired > 0 ? Math.round((lane.hits / lane.shotsFired) * 100) : 0} suffix="%" />
             </div>
 
-            <ExercisePanel lane={lane} />
+            {tab === 'config' && (
+              <>
+                <ExercisePanel lane={lane} />
+                <ARCPanel lane={lane} />
+              </>
+            )}
+
+            {tab === 'replay' && (
+              <ReplayPanel lane={lane} />
+            )}
           </div>
         </main>
       </div>
