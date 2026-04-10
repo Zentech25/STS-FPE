@@ -62,10 +62,10 @@ interface FPEStore {
 
 export const useFPEStore = create<FPEStore>((set) => ({
   lanes: [1, 2, 3, 4].map(createLane),
-  selectedLaneId: null,
+  selectedLaneId: 1,
 
   selectLane: (id) => set({ selectedLaneId: id }),
-  clearLane: () => set({ selectedLaneId: null }),
+  clearLane: () => {},
 
   setStatus: (laneId, status) =>
     set((s) => ({
