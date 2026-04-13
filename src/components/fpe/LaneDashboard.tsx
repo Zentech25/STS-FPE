@@ -59,7 +59,6 @@ export const LaneDashboard = () => {
                 <span className="block text-[10px] text-muted-foreground font-mono mt-0.5">FPE CONTROL</span>
               </div>
             </div>
-            <StatusBadge status={lane.status} />
             <ConnectionIndicators />
           </div>
 
