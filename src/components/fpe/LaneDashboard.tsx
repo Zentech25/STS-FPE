@@ -60,6 +60,7 @@ export const LaneDashboard = () => {
               </div>
             </div>
             <StatusBadge status={lane.status} />
+            <ConnectionIndicators />
           </div>
 
           {/* Center: Exercise Type Toggle */}
