@@ -116,6 +116,7 @@ const createLane = (id: number): LaneState => ({
   shots: [],
   sessionHistory: generateDummySessions(id),
   arcSelection: { weapon: '', fireType: '', practice: '' },
+  sessionStartTime: null,
 });
 
 interface FPEStore {
