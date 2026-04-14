@@ -7,7 +7,7 @@ import { ARCPanel } from './ARCPanel';
 import { ReplayModal } from './ReplayModal';
 import { AnimatedBackground } from './AnimatedBackground';
 import { ConnectionIndicators } from './ConnectionIndicators';
-import { Play, Pause, Square, Crosshair, RotateCcw, History } from 'lucide-react';
+import { Play, Pause, Square, Crosshair, History, Focus } from 'lucide-react';
 import { useState } from 'react';
 
 export const LaneDashboard = () => {
