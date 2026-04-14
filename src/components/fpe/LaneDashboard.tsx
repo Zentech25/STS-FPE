@@ -127,7 +127,6 @@ export const LaneDashboard = () => {
 
             <ExercisePanel lane={lane} exType={lane.exercise.type} onExTypeChange={setExType} masterMode={lane.mode === 'master'} />
             <ARCPanel lane={lane} />
-            </div>
           </div>
         </main>
       </div>
