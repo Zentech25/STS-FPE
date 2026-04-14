@@ -6,7 +6,7 @@ export interface Trainee {
 
 export type PracticeType = "grouping" | "application" | "timed" | "snapshot";
 export type TimeOfDay = "day" | "night";
-export type SessionStatus = "standby" | "live" | "paused";
+export type SessionStatus = "standby" | "live" | "paused" | "completed";
 export type ControlMode = "master" | "firer";
 
 export interface ExerciseConfig {
@@ -25,6 +25,8 @@ export interface ExerciseConfig {
   exposure: number;
   upTime: number;
   downTime: number;
+  groupingSize: number;
+  groupingUnit: "cm" | "inches";
 }
 
 export interface ShotRecord {
