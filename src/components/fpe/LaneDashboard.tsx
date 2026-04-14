@@ -1,5 +1,4 @@
 import { useFPEStore } from '@/store/fpe-store';
-import { StatusBadge } from './StatusBadge';
 import { ModeBadge } from './ModeBadge';
 import { TraineePanel } from './TraineePanel';
 import { ExercisePanel } from './ExercisePanel';
@@ -30,7 +29,6 @@ export const LaneDashboard = () => {
     resetSession(lane.id);
   };
 
-  
   const setExType = (type: 'custom' | 'arc') => updateExercise(lane.id, { type });
 
   return (
@@ -38,74 +36,61 @@ export const LaneDashboard = () => {
       <AnimatedBackground />
 
       <div className="relative z-10">
-        {/* Header */}
-        <header className="h-16 flex items-center justify-between px-6 shrink-0" style={{
+        {/* Header — streamlined */}
+        <header className="h-14 flex items-center justify-between px-5 shrink-0" style={{
           background: "var(--surface-glass)",
           backdropFilter: "blur(24px) saturate(180%)",
           WebkitBackdropFilter: "blur(24px) saturate(180%)",
           borderBottom: "1px solid var(--divider)",
           boxShadow: "var(--shadow-soft)",
         }}>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{
+          {/* Left: Branding + Connection */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{
                 background: "var(--gradient-primary)",
-                boxShadow: "0 4px 14px hsl(230 80% 60% / 0.3)",
+                boxShadow: "0 2px 10px hsl(230 80% 60% / 0.25)",
               }}>
-                <Crosshair className="w-5 h-5 text-white" />
+                <Crosshair className="w-4 h-4 text-white" />
               </div>
-              <div>
-                <span className="text-[15px] font-bold tracking-wide text-foreground leading-none">Lane {lane.id}</span>
-                <span className="block text-[10px] text-muted-foreground font-mono mt-0.5">FPE CONTROL</span>
+              <div className="leading-none">
+                <span className="text-[14px] font-bold tracking-wide text-foreground">Lane {lane.id}</span>
+                <span className="block text-[9px] text-muted-foreground font-mono">FPE CONTROL</span>
               </div>
             </div>
+
+            <div className="w-px h-7" style={{ background: "var(--divider)" }} />
+
             <ConnectionIndicators />
           </div>
 
-          {/* Center: Exercise Type Toggle */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center rounded-xl overflow-hidden" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
-              {(['custom', 'arc'] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setExType(t)}
-                  disabled={lane.mode === 'master'}
-                  className={`px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider transition-all ${
-                    lane.exercise.type === t ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-                  } disabled:cursor-default`}
-                  style={lane.exercise.type === t ? { background: "var(--gradient-primary)" } : undefined}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* Calibration button */}
+          {/* Right: Actions */}
+          <div className="flex items-center gap-2">
             <button
               onClick={() => alert('Weapon calibration initiated — follow on-screen prompts.')}
-              className="h-11 px-5 rounded-xl flex items-center gap-2 glass-btn text-[12px] font-semibold text-muted-foreground hover:text-foreground"
+              className="h-10 px-4 rounded-lg flex items-center gap-1.5 glass-btn text-[11px] font-semibold text-muted-foreground hover:text-foreground"
               style={{ minWidth: 44, minHeight: 44 }}
             >
               <Focus className="w-4 h-4" />
               CALIBRATE
             </button>
 
-            {/* Replay button */}
             <button
               onClick={() => setReplayOpen(true)}
-              className="h-11 px-5 rounded-xl flex items-center gap-2 glass-btn text-[12px] font-semibold text-muted-foreground hover:text-foreground"
+              className="h-10 px-4 rounded-lg flex items-center gap-1.5 glass-btn text-[11px] font-semibold text-muted-foreground hover:text-foreground"
             >
               <History className="w-4 h-4" />
               REPLAY
             </button>
 
+            <div className="w-px h-7" style={{ background: "var(--divider)" }} />
+
             <ModeBadge mode={lane.mode} />
-            <div className="flex gap-2 ml-2">
+
+            <div className="flex gap-1.5 ml-1">
               <button
                 onClick={toggleStatus}
-                className="w-11 h-11 rounded-xl flex items-center justify-center glass-btn"
+                className="w-10 h-10 rounded-lg flex items-center justify-center glass-btn"
                 style={{
                   color: lane.status === 'live' ? 'hsl(var(--warning))' : 'hsl(var(--success))',
                 }}
@@ -114,7 +99,7 @@ export const LaneDashboard = () => {
               </button>
               <button
                 onClick={stop}
-                className="w-11 h-11 rounded-xl flex items-center justify-center glass-btn"
+                className="w-10 h-10 rounded-lg flex items-center justify-center glass-btn"
                 style={{ color: 'hsl(var(--destructive))' }}
               >
                 <Square className="w-5 h-5" />
@@ -140,13 +125,34 @@ export const LaneDashboard = () => {
               <ScoreStat label="ACCURACY" value={lane.shotsFired > 0 ? Math.round((lane.hits / lane.shotsFired) * 100) : 0} suffix="%" />
             </div>
 
-            <ExercisePanel lane={lane} />
-            <ARCPanel lane={lane} />
+            {/* Exercise type toggle + config */}
+            <div className="space-y-0">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center rounded-xl overflow-hidden" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
+                  {(['custom', 'arc'] as const).map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setExType(t)}
+                      disabled={lane.mode === 'master'}
+                      className={`px-6 py-2.5 text-[11px] font-semibold uppercase tracking-wider transition-all ${
+                        lane.exercise.type === t ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                      } disabled:cursor-default`}
+                      style={lane.exercise.type === t ? { background: "var(--gradient-primary)" } : undefined}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+                <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Exercise Type</span>
+              </div>
+
+              <ExercisePanel lane={lane} />
+              <ARCPanel lane={lane} />
+            </div>
           </div>
         </main>
       </div>
 
-      {/* Replay Modal */}
       <ReplayModal lane={lane} open={replayOpen} onClose={() => setReplayOpen(false)} />
     </div>
   );
