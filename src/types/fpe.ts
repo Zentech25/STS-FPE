@@ -79,4 +79,5 @@ export interface LaneState {
   shots: ShotRecord[];
   sessionHistory: SessionRecord[];
   arcSelection: ARCSelection;
+  sessionStartTime: number | null;
 }
