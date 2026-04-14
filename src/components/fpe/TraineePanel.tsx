@@ -186,7 +186,7 @@ export const TraineePanel = ({ lane }: { lane: LaneState }) => {
       </div>
 
       {/* Step 2: Trainee search (only shown after company is selected) */}
-      {selectedCompanyId && (
+      {selectedCompanyId && !companyOpen && (
         <div ref={searchRef} className="relative">
           <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">SEARCH TRAINEE</label>
           <div className="relative">
