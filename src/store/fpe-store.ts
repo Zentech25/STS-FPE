@@ -124,9 +124,8 @@ interface FPEStore {
   setStatus: (laneId: number, status: SessionStatus) => void;
   setMode: (laneId: number, mode: ControlMode) => void;
   updateExercise: (laneId: number, config: Partial<ExerciseConfig>) => void;
-  addTrainee: (laneId: number, trainee: Trainee) => void;
-  removeTrainee: (laneId: number, traineeId: string) => void;
-  reorderQueue: (laneId: number, fromIndex: number, toIndex: number) => void;
+  setTrainee: (laneId: number, trainee: Trainee) => void;
+  clearTrainee: (laneId: number) => void;
   fireShot: (laneId: number, shot: ShotRecord) => void;
   resetSession: (laneId: number) => void;
   saveSession: (laneId: number) => void;
@@ -157,31 +156,18 @@ export const useFPEStore = create<FPEStore>((set) => ({
       ),
     })),
 
-  addTrainee: (laneId, trainee) =>
+  setTrainee: (laneId, trainee) =>
     set((s) => ({
       lanes: s.lanes.map((l) =>
-        l.id === laneId ? { ...l, traineeQueue: [...l.traineeQueue, trainee] } : l
+        l.id === laneId ? { ...l, traineeQueue: [trainee] } : l
       ),
     })),
 
-  removeTrainee: (laneId, traineeId) =>
+  clearTrainee: (laneId) =>
     set((s) => ({
       lanes: s.lanes.map((l) =>
-        l.id === laneId
-          ? { ...l, traineeQueue: l.traineeQueue.filter((t) => t.id !== traineeId) }
-          : l
+        l.id === laneId ? { ...l, traineeQueue: [] } : l
       ),
-    })),
-
-  reorderQueue: (laneId, fromIndex, toIndex) =>
-    set((s) => ({
-      lanes: s.lanes.map((l) => {
-        if (l.id !== laneId) return l;
-        const queue = [...l.traineeQueue];
-        const [moved] = queue.splice(fromIndex, 1);
-        queue.splice(toIndex, 0, moved);
-        return { ...l, traineeQueue: queue };
-      }),
     })),
 
   fireShot: (laneId, shot) =>

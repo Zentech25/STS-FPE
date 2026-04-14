@@ -1,55 +1,84 @@
 import { useFPEStore } from '@/store/fpe-store';
 import type { LaneState } from '@/types/fpe';
-import { User, ChevronUp, ChevronDown, X, UserPlus, Target, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
+import { User, X, Target, Search } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 import { getTargetById } from '@/contexts/TargetsContext';
 
-export const TraineePanel = ({ lane }: { lane: LaneState }) => {
-  const { reorderQueue, removeTrainee, addTrainee } = useFPEStore();
-  const [showAdd, setShowAdd] = useState(false);
-  const [queueOpen, setQueueOpen] = useState(false);
-  const [newName, setNewName] = useState('');
-  const [newRank, setNewRank] = useState('PV2');
+// Dummy trainee database for search
+const TRAINEE_DATABASE = [
+  { id: 'T001', name: 'Johnson, M.', rank: 'PFC' },
+  { id: 'T002', name: 'Williams, K.', rank: 'SPC' },
+  { id: 'T003', name: 'Davis, R.', rank: 'PV2' },
+  { id: 'T004', name: 'Martinez, A.', rank: 'SGT' },
+  { id: 'T005', name: 'Brown, J.', rank: 'PFC' },
+  { id: 'T006', name: 'Taylor, S.', rank: 'CPL' },
+  { id: 'T007', name: 'Anderson, L.', rank: 'SSG' },
+  { id: 'T008', name: 'Thomas, P.', rank: 'PV2' },
+  { id: 'T009', name: 'Jackson, D.', rank: 'SPC' },
+  { id: 'T010', name: 'White, C.', rank: 'PFC' },
+  { id: 'T011', name: 'Harris, B.', rank: 'SGT' },
+  { id: 'T012', name: 'Clark, E.', rank: 'CPL' },
+];
 
-  const activeTrainee = lane.traineeQueue[0];
-  const waiting = lane.traineeQueue.slice(1);
-  const hasTrainees = lane.traineeQueue.length > 0;
+export const TraineePanel = ({ lane }: { lane: LaneState }) => {
+  const { setTrainee, clearTrainee } = useFPEStore();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const activeTrainee = lane.traineeQueue[0] || null;
   const target = getTargetById(lane.exercise.targetType);
 
-  const handleAdd = () => {
-    if (!newName.trim()) return;
-    addTrainee(lane.id, {
-      id: `T${Date.now()}`,
-      name: newName.trim(),
-      rank: newRank,
-    });
-    setNewName('');
-    setShowAdd(false);
+  // Filter trainees based on search query
+  const filteredTrainees = searchQuery.trim()
+    ? TRAINEE_DATABASE.filter(
+        (t) =>
+          t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          t.id.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : TRAINEE_DATABASE;
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const selectTrainee = (t: typeof TRAINEE_DATABASE[0]) => {
+    setTrainee(lane.id, { id: t.id, name: t.name, rank: t.rank });
+    setSearchQuery('');
+    setShowDropdown(false);
   };
 
-  if (hasTrainees) {
+  if (activeTrainee) {
     return (
       <div className="glass-panel p-5 space-y-4">
-        {/* Active trainee info bar */}
-        {activeTrainee && (
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{
-              background: "var(--gradient-primary)",
-              boxShadow: "0 2px 8px hsl(230 80% 60% / 0.3)",
-            }}>
-              <User className="w-5 h-5 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-foreground font-semibold text-[14px] truncate">{activeTrainee.rank} {activeTrainee.name}</div>
-              <div className="text-[11px] text-muted-foreground font-mono">ID: {activeTrainee.id}</div>
-            </div>
-            {waiting.length > 0 && (
-              <span className="text-[11px] text-muted-foreground font-medium px-3 py-1.5 rounded-lg" style={{ background: "var(--surface-inset)" }}>
-                +{waiting.length} queued
-              </span>
-            )}
+        {/* Active trainee info */}
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{
+            background: "var(--gradient-primary)",
+            boxShadow: "0 2px 8px hsl(230 80% 60% / 0.3)",
+          }}>
+            <User className="w-6 h-6 text-white" />
           </div>
-        )}
+          <div className="flex-1 min-w-0">
+            <div className="text-foreground font-semibold text-[15px] truncate">{activeTrainee.rank} {activeTrainee.name}</div>
+            <div className="text-[12px] text-muted-foreground font-mono">ID: {activeTrainee.id}</div>
+          </div>
+          <button
+            onClick={() => clearTrainee(lane.id)}
+            className="w-11 h-11 rounded-xl flex items-center justify-center glass-btn text-muted-foreground hover:text-destructive transition-colors"
+            title="Remove trainee"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
         {/* Target display */}
         <div className="relative rounded-xl overflow-hidden flex items-center justify-center" style={{
@@ -91,119 +120,69 @@ export const TraineePanel = ({ lane }: { lane: LaneState }) => {
             {target.label}
           </div>
         )}
-
-        {/* Collapsible trainee queue */}
-        <div>
-          <button
-            onClick={() => setQueueOpen(!queueOpen)}
-            className="w-full flex items-center justify-between h-12 px-4 rounded-xl glass-btn"
-          >
-            <span className="text-[11px] font-semibold tracking-wider uppercase text-muted-foreground">
-              QUEUE ({lane.traineeQueue.length})
-            </span>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={(e) => { e.stopPropagation(); setShowAdd(!showAdd); }}
-                className="w-9 h-9 rounded-lg flex items-center justify-center glass-btn text-primary"
-              >
-                <UserPlus className="w-4 h-4" />
-              </button>
-              <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${queueOpen ? 'rotate-90' : ''}`} />
-            </div>
-          </button>
-
-          {queueOpen && (
-            <div className="mt-3 space-y-1.5 animate-fade-in">
-              {showAdd && (
-                <div className="flex gap-2 mb-2">
-                  <select
-                    value={newRank}
-                    onChange={(e) => setNewRank(e.target.value)}
-                    className="sys-input h-11 w-24 text-[12px] font-mono"
-                  >
-                    {['PV2', 'PFC', 'SPC', 'CPL', 'SGT', 'SSG'].map((r) => (
-                      <option key={r} value={r}>{r}</option>
-                    ))}
-                  </select>
-                  <input
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    placeholder="Last, F."
-                    className="sys-input h-11 flex-1 text-[13px]"
-                    onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-                  />
-                  <button onClick={handleAdd} className="sys-btn-primary h-11 w-20 text-[12px]">ADD</button>
-                </div>
-              )}
-
-              {lane.traineeQueue.map((t, i) => (
-                <div key={t.id} className="flex items-center justify-between rounded-xl px-4 py-2.5 text-[12px]" style={{
-                  background: i === 0 ? "hsl(var(--primary) / 0.08)" : "var(--surface-elevated)",
-                  border: `1px solid ${i === 0 ? "hsl(var(--primary) / 0.2)" : "var(--divider)"}`,
-                }}>
-                  <span className="text-foreground font-medium">
-                    {i === 0 && <span className="text-primary mr-1.5">▶</span>}
-                    {t.rank} {t.name}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    {i > 0 && (
-                      <button onClick={() => reorderQueue(lane.id, i, i - 1)} className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">
-                        <ChevronUp className="w-4 h-4" />
-                      </button>
-                    )}
-                    {i > 0 && i < lane.traineeQueue.length - 1 && (
-                      <button onClick={() => reorderQueue(lane.id, i, i + 1)} className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">
-                        <ChevronDown className="w-4 h-4" />
-                      </button>
-                    )}
-                    {i > 0 && (
-                      <button onClick={() => removeTrainee(lane.id, t.id)} className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors">
-                        <X className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
     );
   }
 
-  // No trainees — show setup form
+  // No trainee assigned — show search
   return (
     <div className="glass-panel p-5 space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="panel-header mb-0 pb-0" style={{ borderBottom: 'none' }}>TRAINEES</div>
-        <button onClick={() => setShowAdd(!showAdd)} className="w-10 h-10 rounded-xl flex items-center justify-center glass-btn text-primary">
-          <UserPlus className="w-5 h-5" />
-        </button>
+      <div className="panel-header mb-0 pb-0" style={{ borderBottom: 'none' }}>TRAINEE</div>
+
+      <div ref={searchRef} className="relative">
+        <div className="relative">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+          <input
+            ref={inputRef}
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setShowDropdown(true);
+            }}
+            onFocus={() => setShowDropdown(true)}
+            placeholder="Search by name or ID..."
+            className="sys-input h-12 w-full pl-11 text-[14px]"
+          />
+        </div>
+
+        {showDropdown && (
+          <div
+            className="absolute z-50 w-full mt-1.5 rounded-xl overflow-hidden max-h-[280px] overflow-y-auto animate-fade-in"
+            style={{
+              background: "var(--surface-elevated)",
+              border: "1px solid var(--divider)",
+              boxShadow: "var(--shadow-medium)",
+            }}
+          >
+            {filteredTrainees.length === 0 ? (
+              <div className="px-4 py-6 text-center text-[13px] text-muted-foreground">
+                No trainees found
+              </div>
+            ) : (
+              filteredTrainees.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => selectTrainee(t)}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-primary/5 active:bg-primary/10"
+                  style={{ borderBottom: "1px solid var(--divider)" }}
+                >
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-primary/10 text-primary shrink-0">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[13px] font-semibold text-foreground truncate">{t.rank} {t.name}</div>
+                    <div className="text-[11px] text-muted-foreground font-mono">{t.id}</div>
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
+        )}
       </div>
 
-      {showAdd && (
-        <div className="flex gap-2 animate-fade-in">
-          <select
-            value={newRank}
-            onChange={(e) => setNewRank(e.target.value)}
-            className="sys-input h-11 w-24 text-[12px] font-mono"
-          >
-            {['PV2', 'PFC', 'SPC', 'CPL', 'SGT', 'SSG'].map((r) => (
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
-          <input
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            placeholder="Last, F."
-            className="sys-input h-11 flex-1 text-[13px]"
-            onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-          />
-          <button onClick={handleAdd} className="sys-btn-primary h-11 w-20 text-[12px]">ADD</button>
-        </div>
-      )}
-
-      <div className="text-center text-muted-foreground text-[14px] py-6">No trainee assigned</div>
+      <div className="text-center text-muted-foreground text-[14px] py-4">
+        Search and select a trainee to begin
+      </div>
     </div>
   );
 };
