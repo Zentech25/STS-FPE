@@ -196,7 +196,7 @@ export const useFPEStore = create<FPEStore>((set) => ({
     set((s) => ({
       lanes: s.lanes.map((l) =>
         l.id === laneId
-          ? { ...l, shotsFired: 0, hits: 0, score: 0, shots: [] }
+          ? { ...l, shotsFired: 0, hits: 0, score: 0, shots: [], sessionStartTime: null }
           : l
       ),
     })),
