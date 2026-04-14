@@ -67,8 +67,11 @@ export interface ARCSelection {
   practice: string;
 }
 
+export const TOTAL_APEX_LANES = 10;
+
 export interface LaneState {
   id: number;
+  connectedApexLane: number;
   status: SessionStatus;
   mode: ControlMode;
   traineeQueue: Trainee[];

@@ -8,6 +8,7 @@ import { SessionCompleteView } from './SessionCompleteView';
 import { ReplayModal } from './ReplayModal';
 import { AnimatedBackground } from './AnimatedBackground';
 import { ConnectionIndicators } from './ConnectionIndicators';
+import { LaneSwitcher } from './LaneSwitcher';
 import { Play, Pause, Square, Crosshair, History, Focus } from 'lucide-react';
 import { useState } from 'react';
 
@@ -68,10 +69,12 @@ export const LaneDashboard = () => {
                 <Crosshair className="w-4 h-4 text-white" />
               </div>
               <div className="leading-none">
-                <span className="text-[14px] font-bold tracking-wide text-foreground">Lane {lane.id}</span>
+                <span className="text-[14px] font-bold tracking-wide text-foreground">FPE {lane.id}</span>
                 <span className="block text-[9px] text-muted-foreground font-mono">FPE CONTROL</span>
               </div>
             </div>
+            <div className="w-px h-7" style={{ background: "var(--divider)" }} />
+            <LaneSwitcher fpeId={lane.id} currentApexLane={lane.connectedApexLane} />
             <div className="w-px h-7" style={{ background: "var(--divider)" }} />
             <ConnectionIndicators />
           </div>

@@ -106,6 +106,7 @@ const generateDummySessions = (laneId: number): SessionRecord[] => {
 
 const createLane = (id: number): LaneState => ({
   id,
+  connectedApexLane: id,
   status: 'standby',
   mode: 'firer',
   traineeQueue: sampleTrainees[id - 1] || [],
@@ -133,6 +134,7 @@ interface FPEStore {
   resetSession: (laneId: number) => void;
   saveSession: (laneId: number) => void;
   updateArcSelection: (laneId: number, sel: Partial<ARCSelection>) => void;
+  switchApexLane: (fpeId: number, apexLane: number) => void;
 }
 
 export const useFPEStore = create<FPEStore>((set) => ({
@@ -240,6 +242,13 @@ export const useFPEStore = create<FPEStore>((set) => ({
         l.id === laneId
           ? { ...l, arcSelection: { ...l.arcSelection, ...sel } }
           : l
+      ),
+    })),
+
+  switchApexLane: (fpeId, apexLane) =>
+    set((s) => ({
+      lanes: s.lanes.map((l) =>
+        l.id === fpeId ? { ...l, connectedApexLane: apexLane } : l
       ),
     })),
 }));
