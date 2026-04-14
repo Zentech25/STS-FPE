@@ -239,7 +239,7 @@ export const TraineePanel = ({ lane }: { lane: LaneState }) => {
         </div>
       )}
 
-      {!selectedCompanyId && (
+      {!selectedCompanyId && !companyOpen && (
         <div className="text-center text-muted-foreground text-[13px] py-4">
           Select a company to search trainees
         </div>
