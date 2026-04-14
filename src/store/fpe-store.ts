@@ -144,7 +144,11 @@ export const useFPEStore = create<FPEStore>((set) => ({
 
   setStatus: (laneId, status) =>
     set((s) => ({
-      lanes: s.lanes.map((l) => (l.id === laneId ? { ...l, status } : l)),
+      lanes: s.lanes.map((l) => (l.id === laneId ? { 
+        ...l, 
+        status,
+        sessionStartTime: status === 'live' && l.status === 'standby' ? Date.now() : l.sessionStartTime,
+      } : l)),
     })),
 
   setMode: (laneId, mode) =>
