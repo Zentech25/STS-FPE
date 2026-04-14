@@ -102,7 +102,7 @@ export const ExercisePanel = ({ lane }: { lane: LaneState }) => {
       <div className="grid grid-cols-2 gap-4">
         <SelectField label="WEAPON" value={ex.weapon} options={['M4A1', 'M16A4', 'M249', 'M240B', 'M9']} onChange={(v) => update({ weapon: v })} disabled={disabled} />
         <SelectField label="POSITION" value={ex.firingPosition} options={['Prone Supported', 'Prone Unsupported', 'Kneeling', 'Standing']} onChange={(v) => update({ firingPosition: v })} disabled={disabled} />
-        <NumberField label="RANGE (m)" value={ex.range} onChange={(v) => update({ range: v })} disabled={disabled} min={25} max={600} step={25} />
+        <SelectField label="RANGE (m)" value={String(ex.range)} options={['10', '25', '50', '100', '200', '300', '400']} onChange={(v) => update({ range: Number(v) })} disabled={disabled} />
         <NumberField label="ROUNDS" value={ex.rounds} onChange={(v) => update({ rounds: v })} disabled={disabled} min={1} max={100} />
         <SelectField label="TIME OF DAY" value={ex.timeOfDay} options={['day', 'night']} onChange={(v) => update({ timeOfDay: v as 'day' | 'night' })} disabled={disabled} />
         <NumberField label="VISIBILITY %" value={ex.visibility} onChange={(v) => update({ visibility: v })} disabled={disabled} min={0} max={100} />
