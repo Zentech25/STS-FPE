@@ -82,6 +82,16 @@ export const LaneDashboard = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Calibration button */}
+            <button
+              onClick={() => alert('Weapon calibration initiated — follow on-screen prompts.')}
+              className="h-11 px-5 rounded-xl flex items-center gap-2 glass-btn text-[12px] font-semibold text-muted-foreground hover:text-foreground"
+              style={{ minWidth: 44, minHeight: 44 }}
+            >
+              <Focus className="w-4 h-4" />
+              CALIBRATE
+            </button>
+
             {/* Replay button */}
             <button
               onClick={() => setReplayOpen(true)}
