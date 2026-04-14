@@ -10,6 +10,8 @@ interface LaneSwitcherProps {
 
 export const LaneSwitcher = ({ fpeId, currentApexLane }: LaneSwitcherProps) => {
   const { lanes, switchApexLane } = useFPEStore();
+  const currentLane = lanes.find((l) => l.id === fpeId);
+  const isSessionActive = currentLane?.status === 'live' || currentLane?.status === 'paused';
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
