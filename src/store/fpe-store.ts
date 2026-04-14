@@ -17,6 +17,8 @@ const defaultExercise = (laneId: number): ExerciseConfig => ({
   exposure: 0,
   upTime: 0,
   downTime: 0,
+  groupingSize: 0,
+  groupingUnit: 'cm',
 });
 
 const sampleTrainees: Trainee[][] = [
