@@ -17,6 +17,8 @@ const defaultExercise = (laneId: number): ExerciseConfig => ({
   exposure: 0,
   upTime: 0,
   downTime: 0,
+  groupingSize: 0,
+  groupingUnit: 'cm',
 });
 
 const sampleTrainees: Trainee[][] = [
@@ -114,6 +116,7 @@ const createLane = (id: number): LaneState => ({
   shots: [],
   sessionHistory: generateDummySessions(id),
   arcSelection: { weapon: '', fireType: '', practice: '' },
+  sessionStartTime: null,
 });
 
 interface FPEStore {
@@ -141,7 +144,11 @@ export const useFPEStore = create<FPEStore>((set) => ({
 
   setStatus: (laneId, status) =>
     set((s) => ({
-      lanes: s.lanes.map((l) => (l.id === laneId ? { ...l, status } : l)),
+      lanes: s.lanes.map((l) => (l.id === laneId ? { 
+        ...l, 
+        status,
+        sessionStartTime: status === 'live' && l.status === 'standby' ? Date.now() : l.sessionStartTime,
+      } : l)),
     })),
 
   setMode: (laneId, mode) =>
@@ -189,7 +196,7 @@ export const useFPEStore = create<FPEStore>((set) => ({
     set((s) => ({
       lanes: s.lanes.map((l) =>
         l.id === laneId
-          ? { ...l, shotsFired: 0, hits: 0, score: 0, shots: [] }
+          ? { ...l, shotsFired: 0, hits: 0, score: 0, shots: [], sessionStartTime: null }
           : l
       ),
     })),

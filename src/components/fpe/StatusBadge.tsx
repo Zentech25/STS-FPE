@@ -4,6 +4,7 @@ const statusConfig: Record<SessionStatus, { label: string; dotClass: string; bgC
   standby: { label: 'STANDBY', dotClass: 'status-dot-offline', bgClass: 'bg-muted' },
   live: { label: 'LIVE', dotClass: 'status-dot-online', bgClass: 'bg-success/10' },
   paused: { label: 'PAUSED', dotClass: 'status-dot-warning', bgClass: 'bg-warning/10' },
+  completed: { label: 'COMPLETED', dotClass: 'status-dot-offline', bgClass: 'bg-primary/10' },
 };
 
 export const StatusBadge = ({ status }: { status: SessionStatus }) => {

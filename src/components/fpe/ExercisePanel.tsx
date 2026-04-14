@@ -129,6 +129,30 @@ export const ExercisePanel = ({ lane, exType, onExTypeChange, masterMode }: Exer
         <SelectField label="TARGET" value={ex.targetType} options={targetOptions} onChange={(v) => update({ targetType: v })} disabled={disabled} />
       </div>
 
+      {/* Grouping size (always shown when practice type is grouping) */}
+      {ex.practiceType === 'grouping' && (
+        <div className="grid grid-cols-2 gap-4">
+          <NumberField label={`GROUPING SIZE (${ex.groupingUnit})`} value={ex.groupingSize} onChange={(v) => update({ groupingSize: v })} disabled={disabled} min={1} step={0.1} />
+          <Field label="UNIT">
+            <div className="flex items-center rounded-lg overflow-hidden h-9" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
+              {(['cm', 'inches'] as const).map((u) => (
+                <button
+                  key={u}
+                  onClick={() => !disabled && update({ groupingUnit: u })}
+                  disabled={disabled}
+                  className={`flex-1 h-full text-[10px] font-semibold uppercase tracking-wider transition-all ${
+                    ex.groupingUnit === u ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                  } disabled:cursor-default`}
+                  style={ex.groupingUnit === u ? { background: "var(--gradient-primary)" } : undefined}
+                >
+                  {u}
+                </button>
+              ))}
+            </div>
+          </Field>
+        </div>
+      )}
+
       {ex.practiceType === 'timed' && (
         <NumberField label="TIME LIMIT (sec)" value={ex.timeLimit} onChange={(v) => update({ timeLimit: v })} disabled={disabled} min={1} />
       )}
