@@ -10,6 +10,8 @@ interface LaneSwitcherProps {
 
 export const LaneSwitcher = ({ fpeId, currentApexLane }: LaneSwitcherProps) => {
   const { lanes, switchApexLane } = useFPEStore();
+  const currentLane = lanes.find((l) => l.id === fpeId);
+  const isSessionActive = currentLane?.status === 'live' || currentLane?.status === 'paused';
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -30,8 +32,10 @@ export const LaneSwitcher = ({ fpeId, currentApexLane }: LaneSwitcherProps) => {
   return (
     <div className="relative" ref={ref}>
       <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold tracking-wide transition-colors"
+        onClick={() => !isSessionActive && setOpen(!open)}
+        disabled={isSessionActive}
+        title={isSessionActive ? 'Cannot switch lanes during an active session' : undefined}
+        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold tracking-wide transition-colors ${isSessionActive ? 'opacity-50 cursor-not-allowed' : ''}`}
         style={{
           background: 'var(--surface-inset)',
           border: '1px solid var(--divider)',
