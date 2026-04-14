@@ -125,29 +125,8 @@ export const LaneDashboard = () => {
               <ScoreStat label="ACCURACY" value={lane.shotsFired > 0 ? Math.round((lane.hits / lane.shotsFired) * 100) : 0} suffix="%" />
             </div>
 
-            {/* Exercise type toggle + config */}
-            <div className="space-y-0">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex items-center rounded-xl overflow-hidden" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
-                  {(['custom', 'arc'] as const).map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setExType(t)}
-                      disabled={lane.mode === 'master'}
-                      className={`px-6 py-2.5 text-[11px] font-semibold uppercase tracking-wider transition-all ${
-                        lane.exercise.type === t ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-                      } disabled:cursor-default`}
-                      style={lane.exercise.type === t ? { background: "var(--gradient-primary)" } : undefined}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                </div>
-                <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Exercise Type</span>
-              </div>
-
-              <ExercisePanel lane={lane} />
-              <ARCPanel lane={lane} />
+            <ExercisePanel lane={lane} exType={lane.exercise.type} onExTypeChange={setExType} masterMode={lane.mode === 'master'} />
+            <ARCPanel lane={lane} />
             </div>
           </div>
         </main>
