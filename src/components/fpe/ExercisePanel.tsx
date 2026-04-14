@@ -54,18 +54,38 @@ const PRACTICE_TYPES: { id: PracticeType; label: string }[] = [
 
 const targetOptions = TARGETS.map((t) => ({ value: t.id, label: t.label }));
 
-export const ExercisePanel = ({ lane }: { lane: LaneState }) => {
+interface ExercisePanelProps {
+  lane: LaneState;
+  exType: 'custom' | 'arc';
+  onExTypeChange: (type: 'custom' | 'arc') => void;
+  masterMode: boolean;
+}
+
+export const ExercisePanel = ({ lane, exType, onExTypeChange, masterMode }: ExercisePanelProps) => {
   const { updateExercise } = useFPEStore();
   const ex = lane.exercise;
-  const disabled = lane.mode === 'master';
+  const disabled = masterMode;
   const update = (config: Partial<typeof ex>) => updateExercise(lane.id, config);
 
   // Only show custom exercise fields (ARC fields are in ARC panel)
-  if (ex.type === 'arc') return null;
+  if (ex.type === 'arc') {
+    return (
+      <div className="glass-panel p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="panel-header mb-0 pb-0" style={{ borderBottom: 'none' }}>EXERCISE CONFIG</div>
+          <ExTypeToggle value={exType} onChange={onExTypeChange} disabled={masterMode} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="glass-panel p-5 space-y-4">
-      <div className="panel-header">EXERCISE CONFIG</div>
+      <div className="flex items-center justify-between">
+        <div className="panel-header mb-0 pb-0" style={{ borderBottom: 'none' }}>EXERCISE CONFIG</div>
+        <ExTypeToggle value={exType} onChange={onExTypeChange} disabled={masterMode} />
+      </div>
+
       {disabled && (
         <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-[12px] animate-fade-in" style={{
           background: 'hsl(var(--accent) / 0.08)',
@@ -123,3 +143,21 @@ export const ExercisePanel = ({ lane }: { lane: LaneState }) => {
     </div>
   );
 };
+
+const ExTypeToggle = ({ value, onChange, disabled }: { value: 'custom' | 'arc'; onChange: (v: 'custom' | 'arc') => void; disabled: boolean }) => (
+  <div className="flex items-center rounded-lg overflow-hidden" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
+    {(['custom', 'arc'] as const).map((t) => (
+      <button
+        key={t}
+        onClick={() => onChange(t)}
+        disabled={disabled}
+        className={`px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-all ${
+          value === t ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+        } disabled:cursor-default`}
+        style={value === t ? { background: "var(--gradient-primary)" } : undefined}
+      >
+        {t}
+      </button>
+    ))}
+  </div>
+);
