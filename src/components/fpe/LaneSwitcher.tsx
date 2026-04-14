@@ -45,8 +45,9 @@ export const LaneSwitcher = ({ fpeId, currentApexLane }: LaneSwitcherProps) => {
 
       {open && (
         <div
-          className="absolute top-full left-0 mt-1.5 z-50 rounded-lg py-1 min-w-[160px]"
+          className="absolute top-full left-0 mt-1.5 rounded-lg py-1 min-w-[160px]"
           style={{
+            zIndex: 9999,
             background: 'var(--surface-glass)',
             backdropFilter: 'blur(24px) saturate(180%)',
             WebkitBackdropFilter: 'blur(24px) saturate(180%)',
