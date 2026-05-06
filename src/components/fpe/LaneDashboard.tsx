@@ -10,6 +10,7 @@ import { AnimatedBackground } from './AnimatedBackground';
 import { ConnectionIndicators } from './ConnectionIndicators';
 import { LaneSwitcher } from './LaneSwitcher';
 import { DaylightToggle } from './DaylightToggle';
+import { FieldShadeTuner } from './FieldShadeTuner';
 import { Play, Pause, Square, Crosshair, History, Focus } from 'lucide-react';
 import { useState } from 'react';
 
