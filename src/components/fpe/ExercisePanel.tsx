@@ -134,7 +134,7 @@ export const ExercisePanel = ({ lane, exType, onExTypeChange, masterMode }: Exer
         <div className="grid grid-cols-2 gap-4">
           <NumberField label={`GROUPING SIZE (${ex.groupingUnit})`} value={ex.groupingSize} onChange={(v) => update({ groupingSize: v })} disabled={disabled} min={1} step={0.1} />
           <Field label="UNIT">
-            <div className="flex items-center rounded-lg overflow-hidden h-9" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
+            <div className="toggle-container flex items-center rounded-lg overflow-hidden h-9" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
               {(['cm', 'inches'] as const).map((u) => (
                 <button
                   key={u}
