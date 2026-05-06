@@ -94,6 +94,7 @@ export const LaneDashboard = () => {
             )}
 
             <DaylightToggle />
+            <FieldShadeTuner />
 
             <button
               onClick={() => setReplayOpen(true)}
