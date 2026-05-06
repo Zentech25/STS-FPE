@@ -159,9 +159,9 @@ export const TraineePanel = ({ lane }: { lane: LaneState }) => {
           <div
             className="absolute z-50 w-full mt-1 rounded-xl overflow-hidden max-h-[240px] overflow-y-auto animate-fade-in"
             style={{
-              background: "var(--surface-elevated)",
-              border: "1px solid var(--divider)",
-              boxShadow: "var(--shadow-medium)",
+              background: "rgba(255, 255, 255, 0.95)",
+              border: "1.5px solid rgba(0, 0, 0, 0.15)",
+              boxShadow: "0 12px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06)",
             }}
           >
             {companies.map((c) => (
@@ -207,9 +207,9 @@ export const TraineePanel = ({ lane }: { lane: LaneState }) => {
             <div
               className="absolute z-50 w-full mt-1 rounded-xl overflow-hidden max-h-[240px] overflow-y-auto animate-fade-in"
               style={{
-                background: "var(--surface-elevated)",
-                border: "1px solid var(--divider)",
-                boxShadow: "var(--shadow-medium)",
+                background: "rgba(255, 255, 255, 0.95)",
+                border: "1.5px solid rgba(0, 0, 0, 0.15)",
+                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06)",
               }}
             >
               {filteredTrainees.length === 0 ? (
