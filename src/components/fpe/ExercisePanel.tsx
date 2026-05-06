@@ -140,7 +140,7 @@ export const ExercisePanel = ({ lane, exType, onExTypeChange, masterMode }: Exer
                   key={u}
                   onClick={() => !disabled && update({ groupingUnit: u })}
                   disabled={disabled}
-                  className={`flex-1 h-full text-[10px] font-semibold uppercase tracking-wider transition-all ${
+                  className={`exercise-pill flex-1 h-full text-[10px] font-semibold uppercase tracking-wider transition-all ${
                     ex.groupingUnit === u ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                   } disabled:cursor-default`}
                   style={ex.groupingUnit === u ? { background: "var(--gradient-primary)" } : undefined}
