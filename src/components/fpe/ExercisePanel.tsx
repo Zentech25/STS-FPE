@@ -106,7 +106,7 @@ export const ExercisePanel = ({ lane, exType, onExTypeChange, masterMode }: Exer
               key={pt.id}
               onClick={() => !disabled && update({ practiceType: pt.id })}
               disabled={disabled}
-              className={`text-[10px] text-center font-semibold py-2 rounded-lg transition-all ${
+              className={`exercise-pill text-[10px] text-center font-semibold py-2 rounded-lg transition-all ${
                 ex.practiceType === pt.id
                   ? "text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
