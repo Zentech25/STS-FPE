@@ -169,7 +169,7 @@ export const ExercisePanel = ({ lane, exType, onExTypeChange, masterMode }: Exer
 };
 
 const ExTypeToggle = ({ value, onChange, disabled }: { value: 'custom' | 'arc'; onChange: (v: 'custom' | 'arc') => void; disabled: boolean }) => (
-  <div className="flex items-center rounded-lg overflow-hidden" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
+  <div className="toggle-container flex items-center rounded-lg overflow-hidden" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
     {(['custom', 'arc'] as const).map((t) => (
       <button
         key={t}
