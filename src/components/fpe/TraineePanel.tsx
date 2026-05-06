@@ -157,6 +157,7 @@ export const TraineePanel = ({ lane }: { lane: LaneState }) => {
 
         {companyOpen && (
           <div
+            data-daylight-dropdown
             className="absolute z-50 w-full mt-1 rounded-xl overflow-hidden max-h-[240px] overflow-y-auto animate-fade-in"
             style={{
               background: "rgba(255, 255, 255, 0.95)",
@@ -205,6 +206,7 @@ export const TraineePanel = ({ lane }: { lane: LaneState }) => {
 
           {showDropdown && (
             <div
+              data-daylight-dropdown
               className="absolute z-50 w-full mt-1 rounded-xl overflow-hidden max-h-[240px] overflow-y-auto animate-fade-in"
               style={{
                 background: "rgba(255, 255, 255, 0.95)",
