@@ -100,7 +100,7 @@ export const ExercisePanel = ({ lane, exType, onExTypeChange, masterMode }: Exer
       {/* Practice Type pills */}
       <div>
         <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">PRACTICE TYPE</label>
-        <div className="grid grid-cols-4 gap-0.5 p-0.5 rounded-xl" style={{ background: "var(--surface-inset)" }}>
+        <div className="toggle-container grid grid-cols-4 gap-0.5 p-0.5 rounded-xl" style={{ background: "var(--surface-inset)" }}>
           {PRACTICE_TYPES.map((pt) => (
             <button
               key={pt.id}
