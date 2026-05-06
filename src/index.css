@@ -179,40 +179,31 @@
   /* ── Input ── */
   .sys-input {
     @apply w-full h-10 px-3.5 rounded-xl text-foreground placeholder:text-muted-foreground text-sm;
-    background: var(--surface-inset);
-    border: 1.5px solid rgba(0, 0, 0, 0.12);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+    background: rgba(255, 255, 255, 0.55);
+    border: 1.5px solid rgba(0, 0, 0, 0.18);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.04);
     transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-  }
-
-  .sys-input option {
-    background: #ffffff;
-    color: hsl(var(--foreground));
   }
 
   .sys-input:focus {
     @apply outline-none;
     border-color: hsl(var(--primary) / 0.55);
-    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.12), inset 0 1px 2px rgba(0, 0, 0, 0.04);
-    background: rgba(0, 0, 0, 0.06);
+    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.12), inset 0 2px 4px rgba(0, 0, 0, 0.04);
+    background: rgba(255, 255, 255, 0.75);
   }
 
   /* ── Daylight Mode: high-contrast for bright environments ── */
   body.daylight-mode .sys-input {
-    background: hsl(224 35% 10%);
-    border: 2px solid hsl(224 40% 6%);
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.15);
-    color: #ffffff;
+    background: #ffffff;
+    border: 2px solid rgba(0, 0, 0, 0.55);
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+    color: #000;
     font-weight: 600;
-  }
-  body.daylight-mode .sys-input option {
-    background: hsl(224 35% 10%);
-    color: #ffffff;
   }
   body.daylight-mode .sys-input:focus {
     border-color: hsl(var(--primary));
-    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.35), inset 0 2px 6px rgba(0, 0, 0, 0.5);
-    background: hsl(224 35% 12%);
+    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.25), inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
   }
   body.daylight-mode .glass-panel {
     background: #ffffff;
