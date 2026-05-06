@@ -49,6 +49,7 @@ export const LaneSwitcher = ({ fpeId, currentApexLane }: LaneSwitcherProps) => {
 
       {open && (
         <div
+          data-daylight-dropdown
           className="absolute top-full left-0 mt-1.5 rounded-lg py-1 min-w-[160px]"
           style={{
             zIndex: 9999,
