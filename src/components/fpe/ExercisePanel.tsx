@@ -175,7 +175,7 @@ const ExTypeToggle = ({ value, onChange, disabled }: { value: 'custom' | 'arc'; 
         key={t}
         onClick={() => onChange(t)}
         disabled={disabled}
-        className={`px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-all ${
+        className={`exercise-pill px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-all ${
           value === t ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
         } disabled:cursor-default`}
         style={value === t ? { background: "var(--gradient-primary)" } : undefined}
