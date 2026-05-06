@@ -100,13 +100,13 @@ export const ExercisePanel = ({ lane, exType, onExTypeChange, masterMode }: Exer
       {/* Practice Type pills */}
       <div>
         <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">PRACTICE TYPE</label>
-        <div className="grid grid-cols-4 gap-0.5 p-0.5 rounded-xl" style={{ background: "var(--surface-inset)" }}>
+        <div className="toggle-container grid grid-cols-4 gap-0.5 p-0.5 rounded-xl" style={{ background: "var(--surface-inset)" }}>
           {PRACTICE_TYPES.map((pt) => (
             <button
               key={pt.id}
               onClick={() => !disabled && update({ practiceType: pt.id })}
               disabled={disabled}
-              className={`text-[10px] text-center font-semibold py-2 rounded-lg transition-all ${
+              className={`exercise-pill text-[10px] text-center font-semibold py-2 rounded-lg transition-all ${
                 ex.practiceType === pt.id
                   ? "text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
@@ -134,13 +134,13 @@ export const ExercisePanel = ({ lane, exType, onExTypeChange, masterMode }: Exer
         <div className="grid grid-cols-2 gap-4">
           <NumberField label={`GROUPING SIZE (${ex.groupingUnit})`} value={ex.groupingSize} onChange={(v) => update({ groupingSize: v })} disabled={disabled} min={1} step={0.1} />
           <Field label="UNIT">
-            <div className="flex items-center rounded-lg overflow-hidden h-9" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
+            <div className="toggle-container flex items-center rounded-lg overflow-hidden h-9" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
               {(['cm', 'inches'] as const).map((u) => (
                 <button
                   key={u}
                   onClick={() => !disabled && update({ groupingUnit: u })}
                   disabled={disabled}
-                  className={`flex-1 h-full text-[10px] font-semibold uppercase tracking-wider transition-all ${
+                  className={`exercise-pill flex-1 h-full text-[10px] font-semibold uppercase tracking-wider transition-all ${
                     ex.groupingUnit === u ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                   } disabled:cursor-default`}
                   style={ex.groupingUnit === u ? { background: "var(--gradient-primary)" } : undefined}
@@ -169,13 +169,13 @@ export const ExercisePanel = ({ lane, exType, onExTypeChange, masterMode }: Exer
 };
 
 const ExTypeToggle = ({ value, onChange, disabled }: { value: 'custom' | 'arc'; onChange: (v: 'custom' | 'arc') => void; disabled: boolean }) => (
-  <div className="flex items-center rounded-lg overflow-hidden" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
+  <div className="toggle-container flex items-center rounded-lg overflow-hidden" style={{ background: "var(--surface-inset)", border: "1px solid var(--divider)" }}>
     {(['custom', 'arc'] as const).map((t) => (
       <button
         key={t}
         onClick={() => onChange(t)}
         disabled={disabled}
-        className={`px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-all ${
+        className={`exercise-pill px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-all ${
           value === t ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
         } disabled:cursor-default`}
         style={value === t ? { background: "var(--gradient-primary)" } : undefined}
